@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pinger-a
+  namespace: demos
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pinger-a
+  template:
+    metadata:
+      labels:
+        app: pinger-a
+    spec:
+      nodeSelector:
+        topology.kubernetes.io/zone: us-central1-a
+      containers:
+      - command:
+        - /pinger
+        - --address=http://demo.demos.svc.cluster.local
+        - --keep-alive=false
+        image: gcr.io/jeremyot-exp/pinger
+        imagePullPolicy: Always
+        name: pinger
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pinger-b
+  namespace: demos
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pinger-b
+  template:
+    metadata:
+      labels:
+        app: pinger-b
+    spec:
+      nodeSelector:
+        topology.kubernetes.io/zone: us-central1-b
+      containers:
+      - command:
+        - /pinger
+        - --address=http://demo.demos.svc.cluster.local
+        - --keep-alive=false
+        image: gcr.io/jeremyot-exp/pinger
+        imagePullPolicy: Always
+        name: pinger
